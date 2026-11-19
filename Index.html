@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIMI AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#101114;color:white}
+header{padding:18px 20px;background:#191b22;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:25px;font-weight:bold;color:#8b7cff}
+button{border:0;border-radius:12px;padding:12px;background:#7564ef;color:white;cursor:pointer}
+#layout{display:flex;height:calc(100vh - 65px)}
+aside{width:220px;background:#191b22;padding:15px}
+aside button{width:100%;margin-bottom:12px}
+main{flex:1;display:flex;flex-direction:column;max-width:850px;margin:auto;width:100%;padding:20px}
+#messages{flex:1;overflow-y:auto;padding-bottom:20px}
+.msg{padding:14px;margin:12px 0;border-radius:14px;line-height:1.5;white-space:pre-wrap}
+.user{background:#39334f;margin-left:35px}
+.ai{background:#22252d;margin-right:35px}
+#composer{display:flex;gap:8px}
+textarea{flex:1;resize:none;padding:14px;border-radius:12px;background:#22252d;color:white;border:1px solid #444;font-size:16px}
+#history{font-size:13px;color:#bbb}
+@media(max-width:600px){aside{width:85px;padding:8px}aside button{font-size:11px;padding:9px}main{padding:12px}.user{margin-left:10px}.ai{margin-right:10px}}
+.light{background:#f2f3f8;color:#171717}
+.light header,.light aside,.light .ai{background:#fff;color:#171717}
+.light textarea{background:white;color:#171717}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">✦ MIMI AI</div>
+<button onclick="toggleTheme()">Theme</button>
+</header>
+<div id="layout">
+<aside>
+<button onclick="newChat()">+ New chat</button>
+<button onclick="showHistory()">History</button>
+<button onclick="alert('Image generation will be connected next.')">Create image</button>
+<div id="history"></div>
+</aside>
+<main>
+<div id="messages">
+<div class="msg ai">Hello! I'm MIMI AI. How can I help you today?</div>
+</div>
+<div id="composer">
+<textarea id="prompt" rows="2" placeholder="Message MIMI AI..."></textarea>
+<button onclick="sendMessage()">Send</button>
+</div>
+</main>
+</div>
+<script>
+let messages=JSON.parse(localStorage.getItem("mimiMessages")||"[]");
+const area=document.getElementById("messages");
+function draw(){
+area.innerHTML="";
+messages.forEach(m=>{
+let d=document.createElement("div");
+d.className="msg "+m.role;
+d.textContent=m.text;
+area.appendChild(d);
+});
+area.scrollTop=area.scrollHeight;
+}
+function save(){localStorage.setItem("mimiMessages",JSON.stringify(messages))}
+function sendMessage(){
+let input=document.getElementById("prompt");
+let text=input.value.trim();
+if(!text)return;
+messages.push({role:"user",text});
+messages.push({role:"ai",text:"Thanks for your message! My AI brain is not connected yet. We'll connect it securely in the next step."});
+input.value="";
+save();draw();
+}
+function newChat(){messages=[];save();draw()}
+function showHistory(){document.getElementById("history").textContent=messages.length+" messages saved on this device."}
+function toggleTheme(){document.body.classList.toggle("light")}
+draw();
+</script>
+</body>
+</html>
